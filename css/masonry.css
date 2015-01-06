@@ -1,0 +1,12 @@
+body {
+    margin-top: 1em;
+}
+
+.masonry-brick {
+    margin: 0px;
+    display: none;
+}
+
+.masonry-brick.loaded {
+    display: block;
+}

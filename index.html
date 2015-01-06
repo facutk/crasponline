@@ -1,0 +1,300 @@
+<html ng-app="myApp">
+    <head>
+        <title>Crasponline Studio</title>
+        <script src="js/jquery.js"></script>
+        <script src="js/jquery.bridget.js"></script>
+        <script src="js/get-style-property.js"></script>
+        <script src="js/get-size.js"></script>
+        <script src="js/EventEmitter.js"></script>
+        <script src="js/eventie.js"></script>
+        <script src="js/doc-ready.js"></script>
+        <script src="js/matches-selector.js"></script>
+        <script src="js/item.js"></script>
+        <script src="js/outlayer.js"></script>
+        <script src="js/imagesloaded.js"></script>
+        <script src="js/plugins.min.js"></script>
+        <script src='js/masonry.pkgd.min.js'></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-route.min.js"></script>
+        <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+        <script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
+        <script src='js/angular-masonry.js'></script>
+        <script src="js/ngLoading.js"></script>
+        
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/masonry.css">
+        <link rel="stylesheet" href="css/ngLoading.css">
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="https://www.firebase.com/resources/tutorial/css/example.css">
+
+<!-- CACHE FILE: videos.html -->
+<script type="text/ng-template" id="videos.html">
+    <!-- Categorias -->
+    <div class="navbar categories">
+        <nav>
+            <ul class="cat bar">
+                <li><a ng-click="filters.category = ''">TODOS</a></li>
+                <li><a ng-click="filters.category = 'cat0'">Musica</a></li>
+                <li><a ng-click="filters.category = 'cat1'">Cine</a></li>
+                <li><a ng-click="filters.category = 'cat2'">Publicidad</a></li>
+            </ul>
+
+            <select>
+                <option value="#todos" data-filter="*">Todos</option>
+                <option value="#autoral" data-filter=".autoral">Autoral</option>
+                <option value="#moda" data-filter=".moda">Moda</option>
+                <option value="#publicidade" data-filter=".publicidade">Publicidade</option>
+                <option value="#registro" data-filter=".registro">Registro</option>
+            </select>
+        </nav>
+    </div>
+    
+    <div class="row projetos" masonry>
+        <div class="masonry-brick item p" ng-repeat="brick in bricks | filter:filters">
+            <a href="{{ brick.link }}" title>
+                <img ng-src="{{ brick.src }}" alt="A masonry brick">
+                <div class="info">
+                    <div class="t">
+                        <div class="tc">
+                            <h3>{{ brick.title }}</h3>
+                            <p>{{ brick.summary }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+                <!-- CHAT MARKUP -->
+    <div class='example-chat l-demo-container'>
+        <header>Firebase Chat Demo</header>
+
+        <div class='example-chat-toolbar'>
+            <label for='nameInput'>Username:</label>
+            <input ng-model='name' type='text' id='nameInput' placeholder='enter a username...'>
+        </div>
+
+        <ul id='example-messages' class='example-chat-messages'>
+            <li ng-repeat='msg in messages'>
+            <strong class='example-chat-username'>{{msg.from}}</strong>
+                {{msg.body}}
+            </li>
+        </ul>
+
+        <footer>
+            <input ng-model='msg' ng-keydown="addMessage($event)" type='text' id='messageInput'  placeholder='Type a message...'>
+        </footer>
+    </div>
+</script>
+
+<!-- CACHE FILE: acerca.html -->
+<script type="text/ng-template" id="acerca.html">
+    acerca!
+</script>
+
+<!-- CACHE FILE: donde.html -->
+<script type="text/ng-template" id="donde.html">
+    donde!
+</script>
+        
+        
+    </head>
+    
+    <body class="container">
+        
+        <article class="margem">
+        
+        
+            <!-- Header -->
+            <header class="cabecalho">
+
+                <!-- Logo -->
+                <h1 class="logo"><a href="/" title="El Craspo">Crasponline Studio • Fotografia y Video</a></h1>
+                <h1 class="title title-int"><span>Crasp</span><br><em>Online</em></h1>
+
+                <!-- Menu -->
+                <ul class="menu bar">
+                    <li><a href="#videos" title="Videos">Videos</a></li>
+                    <li><a href="#acerca" title="Acerca">Acerca</a></li>
+                    <li><a href="#donde" title="Donde">Donde</a></li>
+                </ul>
+
+                <!-- Social -->
+                <ul class="social">
+                    <li><a href="//fb.me/cras" title="Facebook" target="_blank">Facebook</a></li>
+                    <li><a href="//vimeo.com/po" title="Vimeo" target="_blank">Vimeo</a></li>
+                    <li><a href="//instagram.com/online" title="Instagram" target="_blank">Instagram</a></li>
+                </ul>
+            </header>
+        
+            <section>
+            
+                <!-- Laterais -->
+                <ul class="lateral">
+                    <li>VIDEOS</li>
+                    <li>BIEN PIOLAS</li>
+                </ul>
+                
+                <div ng-view></div>
+                
+            </section>
+            
+            
+            <!-- Footer -->
+            <footer class="bar">12 3456 7890&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="#">baws@crasponline.com.ar</a></footer>
+            
+        </article>
+
+   
+
+<script>
+myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'])
+.config(function(loadingProvider) {
+
+})
+.value('fbURL', 'https://incandescent-torch-8162.firebaseio.com/')
+.service('fbRef', function(fbURL) {
+  return new Firebase(fbURL)
+})
+.controller('Acerca', ['$scope',
+    function($scope) {
+        $scope.greetings = "hola acerca!";
+    }
+])
+.controller('Donde', ['$scope',
+    function($scope) {
+        $scope.greetings = "hola donde!";
+    }
+])
+.controller('Videos', ['$scope', '$firebase',
+    function($scope, $firebase) {
+        var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
+        $scope.messages = $firebase(ref).$asArray();
+
+        //ADD MESSAGE METHOD
+        $scope.addMessage = function(e) {
+
+            //LISTEN FOR RETURN KEY
+            if (e.keyCode === 13 && $scope.msg) {
+                //ALLOW CUSTOM OR ANONYMOUS USER NAMES
+                var name = $scope.name || 'anonymous';
+                $scope.messages.$add({from: name, body: $scope.msg});
+                //RESET MESSAGE
+                $scope.msg = "";
+            }
+        }
+        $scope.load = function() {
+           // do your $() stuff here
+            var a = jQuery(".projetos");
+            a.isotope({
+                itemSelector: ".item",
+                transitionDuration: "0.8s",
+                columnWidth: a.width() / 6
+            }), a.imagesLoaded(function() {
+                $(".projetos").isotope("layout"), a.find("img").each(function() {
+                    var a = $(this);
+                    a.prop("src", a.prop("src").replace("upload/thumbnails/", "upload/large/"))
+                })
+            }), $(".cat li a").on("click", function() {
+                var b = $(this).attr("data-filter");
+                a.isotope({
+                    filter: b
+                })
+            });
+            
+            var b = $(".cat"),
+                c = b.find("a");
+            c.click(function() {
+                var a = $(this);
+                if (a.hasClass("on")) return !1;
+                var b = a.parents(".cat");
+                b.find(".on").removeClass("on"), a.addClass("on")
+            });
+            
+            var d = $(".cat").clone();
+            $(".cat").after(d), $(".cat:last").hide(), offset = $(".cat:first").offset();
+            var e = !1;
+            "undefined" != typeof offset && (e = offset.top), $(document).scroll(function() {
+                doc = $(this), dist = $(this).scrollTop(), dist >= e ? ($(".cat:last").show().addClass("top"), $(".cat:first").css({
+                    position: "fixed"
+                })) : ($(".cat:first").css({
+                    position: "static"
+                }), $(".cat:last").hide())
+            }), $("<select />").appendTo(".home nav"), $(".home nav ul:nth-child(1) a").each(function() {
+                var a = $(this);
+                $("<option />", {
+                    value: a.attr("href"),
+                    text: a.text(),
+                    "data-filter": a.attr("data-filter")
+                }).appendTo("nav select")
+            }), $("nav select").change(function() {
+                location.hash = $(this).find("option:selected").val();
+                var b = $(this).find("option:selected").attr("data-filter");
+                a.isotope({
+                    filter: b
+                })
+            })
+
+        };
+        $scope.load();
+        function genBrick() {
+            var height = ~~(Math.random() * 500) + 100;
+            var id = ~~(Math.random() * 10000);
+            return {
+                    src: 'http://lorempixel.com/g/280/' + height + '/?' + id,
+                    link: '#link' + ~~(Math.random() * 100),
+                    title: 'Title #' + ~~(Math.random() * 100),
+                    summary: 'Summary #' + ~~(Math.random() * 100),
+                    category: 'cat' + ~~(Math.random() * 3)
+                };
+        };
+
+        $scope.bricks = [
+            genBrick(),
+            genBrick(),
+            genBrick(),
+            genBrick(),
+            genBrick(),
+            genBrick(),
+            genBrick(),
+            genBrick()
+        ];
+        $scope.filters = {};
+        $scope.categories = [ 'cat0', 'cat1', 'cat2' ];
+        $scope.links = [
+            {name: 'Apple', category: 'Fruit'},
+            {name: 'Pear', category: 'Fruit'},
+            {name: 'Almond', category: 'Nut'},
+            {name: 'Mango', category: 'Fruit'},
+            {name: 'Cashew', category: 'Nut'}
+        ];
+            
+    }
+])
+.config(function($routeProvider) {
+    $routeProvider
+        .when('/', {
+            controller:'Videos',
+            templateUrl:'videos.html'
+        })
+        .when('/acerca', {
+            controller:'Acerca',
+            templateUrl:'acerca.html'
+        })
+        .when('/donde', {
+            controller:'Donde',
+            templateUrl:'donde.html'
+        })
+        .otherwise({
+            redirectTo:'/'
+        });
+})
+;
+</script>
+</body>
+
+
+</html>
