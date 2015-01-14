@@ -15,6 +15,7 @@
         <script src="js/plugins.min.js"></script>
         <script src='js/masonry.pkgd.min.js'></script>
         
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-resource.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-route.min.js"></script>
@@ -23,8 +24,9 @@
         <script src='js/angular-masonry.js'></script>
         <script src="js/ngLoading.js"></script>
         
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="css/masonry.css">
         <link rel="stylesheet" href="css/ngLoading.css">
         <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
@@ -110,7 +112,24 @@
         <h1 class="title title-int"><span>Donde</span><br><em>lo encontramos</em></h1>
     </header>
 </script>
-        
+
+<!-- CACHE FILE: login.html -->
+<script type="text/ng-template" id="login.html">
+  
+    <form class="form-login" role="form" ng-submit="submit()" autocomplete="on">
+        <h2 class="form-login-heading">Please login</h2>
+        <input name="email" type="email" class="form-control" placeholder="Email address" required autofocus/>
+        <input name="password" type="password" class="form-control" placeholder="Password" required/>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me" class="checkbox-label" checked="True" /> Remember me
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+
+</script>
+
         
     </head>
     
@@ -123,7 +142,7 @@
             <header class="cabecalho">
 
                 <!-- Logo -->
-                <h1 class="logo"><a href="/" title="El Craspo">Crasponline Studio • Fotografia y Video</a></h1>
+                <h1 class="logo"><a href="#login" title="Login">Crasponline Studio • Fotografia y Video</a></h1>
 
                 <!-- Menu -->
                 <ul class="menu bar">
@@ -166,6 +185,11 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .service('fbRef', function(fbURL) {
   return new Firebase(fbURL)
 })
+.controller('Login', ['$scope',
+    function($scope) {
+        $scope.greetings = "hola login!";
+    }
+])
 .controller('Acerca', ['$scope',
     function($scope) {
         $scope.greetings = "hola acerca!";
@@ -254,6 +278,10 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         .when('/donde', {
             controller:'Donde',
             templateUrl:'donde.html'
+        })
+        .when('/login', {
+            controller:'Login',
+            templateUrl:'login.html'
         })
         .otherwise({
             redirectTo:'/'
