@@ -118,11 +118,11 @@
   
     <form class="form-login" role="form" ng-submit="submit()" autocomplete="on">
         <h2 class="form-login-heading">Please login</h2>
-        <input name="email" type="email" class="form-control" placeholder="Email address" required autofocus/>
-        <input name="password" type="password" class="form-control" placeholder="Password" required/>
+        <input ng-model="email" name="email" type="email" class="form-control" placeholder="Email address" required autofocus/>
+        <input ng-model="password" name="password" type="password" class="form-control" placeholder="Password" required/>
         <div class="checkbox">
             <label>
-                <input type="checkbox" value="remember-me" class="checkbox-label" checked="True" /> Remember me
+                <input ng-model="remember" type="checkbox" value="remember-me" class="checkbox-label" checked="True" /> Remember me
             </label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
@@ -181,13 +181,28 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .config(function(loadingProvider) {
 
 })
-.value('fbURL', 'https://incandescent-torch-8162.firebaseio.com/')
-.service('fbRef', function(fbURL) {
-  return new Firebase(fbURL)
+.value('firebaseURL', 'https://incandescent-torch-8162.firebaseio.com/')
+.service('fbRef', function(firebaseURL) {
+  return new Firebase(firebaseURL)
 })
-.controller('Login', ['$scope',
-    function($scope) {
-        $scope.greetings = "hola login!";
+.controller('Login', ['$scope', '$firebase',
+    function($scope, $firebase) {
+    
+        $scope.submit = function () {
+            var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
+
+            ref.authWithPassword({
+                email    : $scope.email,
+                password : $scope.password
+            }, function(error, authData) {
+                if (error) {
+                    console.log("Login Failed!", error);
+                } else {
+                    console.log("Authenticated successfully with payload:", authData);
+                }
+            });
+        };
+        
     }
 ])
 .controller('Acerca', ['$scope',
