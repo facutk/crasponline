@@ -115,7 +115,11 @@
 
 <!-- CACHE FILE: login.html -->
 <script type="text/ng-template" id="login.html">
-  
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Admin</span><br><em>Login</em></h1>
+    </header>
+    
     <form class="form-login" role="form" ng-submit="submit()" autocomplete="on">
         <h2 class="form-login-heading">Please login</h2>
         <input ng-model="email" name="email" type="email" class="form-control" placeholder="Email address" required autofocus/>
@@ -128,6 +132,23 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
     </form>
 
+</script>
+
+<!-- CACHE FILE: admin.html -->
+<script type="text/ng-template" id="admin.html">
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Admin</span><br><em>Area</em></h1>
+    </header>
+
+    <div ng-show="user">
+      <p>Hello, {{ user.password.email }}</p>
+      <button ng-click="auth.$unauth()">Logout</button>
+    </div>
+    <div ng-hide="user">
+        <p>Welcome, please <a href="#login">login</a></p>
+    </div>
+    
 </script>
 
         
@@ -172,7 +193,11 @@
             </section>
             
             <!-- Footer -->
-            <footer class="bar">12 3456 7890&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href="#">baws@crasponline.com.ar</a></footer>
+            <footer class="bar">
+                12 3456 7890&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
+                <a href="#">baws@crasponline.com.ar</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
+                <a href="#admin">admin</a>
+            </footer>
             
         </article>
 
@@ -185,6 +210,18 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .service('fbRef', function(firebaseURL) {
   return new Firebase(firebaseURL)
 })
+.factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
+    var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
+    return $firebaseAuth(ref);
+}])
+.controller('Admin', ['$scope', "Auth",
+    function($scope, Auth) {
+        $scope.greetings = "hola Admin!";
+        $scope.auth = Auth;
+        $scope.user = $scope.auth.$getAuth();
+        console.log("Auth Status:", $scope.user );
+    }
+])
 .controller('Login', ['$scope', '$firebase',
     function($scope, $firebase) {
     
@@ -268,16 +305,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             genBrick(),
             genBrick()
         ];
-        $scope.filters = {};
-        $scope.categories = [ 'cat0', 'cat1', 'cat2' ];
-        $scope.links = [
-            {name: 'Apple', category: 'Fruit'},
-            {name: 'Pear', category: 'Fruit'},
-            {name: 'Almond', category: 'Nut'},
-            {name: 'Mango', category: 'Fruit'},
-            {name: 'Cashew', category: 'Nut'}
-        ];
-            
+
     }
 ])
 .config(function($routeProvider) {
@@ -293,6 +321,10 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         .when('/donde', {
             controller:'Donde',
             templateUrl:'donde.html'
+        })
+        .when('/admin', {
+            controller:'Admin',
+            templateUrl:'admin.html'
         })
         .when('/login', {
             controller:'Login',
