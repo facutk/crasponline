@@ -151,7 +151,72 @@
     
 </script>
 
-        
+<!-- CACHE FILE: main.html -->
+<script type="text/ng-template" id="main.html">
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Main</span><br><em>Area</em></h1>
+    </header>
+
+    <form ng-submit="add()">
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" ng-model="firstname" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" ng-model="lastname" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary">
+        </div>
+    </form>
+    
+    <table class="table">
+        <thead>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(id, name) in person">
+                <td>{{ name.firstname }}</td>
+                <td>{{ name.lastname }}</td>
+                <td>
+                    <a href="#/edit/{{ name.$id }}">Edit</a>
+                </t>
+                <td>
+                    <a href="#" ng-click="remove(id)">Remove</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</script>
+
+<!-- CACHE FILE: edit.html -->
+<script type="text/ng-template" id="edit.html">
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Edit</span><br><em>post</em></h1>
+    </header>
+
+    <form ng-submit="edit()">
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" ng-model="person.firstname" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" ng-model="person.lastname" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary">
+        </div>
+    </form>
+    
+</script>
+
     </head>
     
     <body class="container">
@@ -210,11 +275,51 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .service('fbRef', function(firebaseURL) {
   return new Firebase(firebaseURL)
 })
-.factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
+.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
     return $firebaseAuth(ref);
 }])
-.controller('Admin', ['$scope', "Auth",
+.factory('Person', function(firebaseURL, $firebase){
+    return $firebase(new Firebase(firebaseURL)).$asArray();
+})
+.controller('Main', ['$scope', 'Person',
+    function($scope, Person) {
+    
+        $scope.person = Person;
+        console.log( $scope.person );
+        
+        $scope.add = function() {
+            var save = Person.$add({
+                firstname: $scope.firstname,
+                lastname:  $scope.lastname
+            });
+            
+            $scope.firstname = '';
+            $scope.lastname = '';
+            
+            if (save){
+                alert('saved succesfully');
+            } else {
+                alert('saved succesfully');
+            }
+        }
+        
+        $scope.remove = function (id) {
+            Person.$remove(id);
+        }
+  
+    }
+])
+.controller('Edit', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
+    var personURL = new Firebase(firebaseURL + $routeParams.id);
+    $scope.person = $firebase(personURL).$asObject();
+
+    $scope.edit = function() {
+        $scope.person.$save();
+        $location.path('/main');
+    }
+})
+.controller('Admin', ['$scope', 'Auth',
     function($scope, Auth) {
         $scope.greetings = "hola Admin!";
         $scope.auth = Auth;
@@ -329,6 +434,14 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         .when('/login', {
             controller:'Login',
             templateUrl:'login.html'
+        })
+        .when('/main', {
+            controller:'Main',
+            templateUrl:'main.html'
+        })
+        .when('/edit/:id', {
+            controller: 'Edit',
+            templateUrl: 'edit.html'
         })
         .otherwise({
             redirectTo:'/'
