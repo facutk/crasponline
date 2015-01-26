@@ -129,7 +129,7 @@
                 <input ng-model="remember" type="checkbox" value="remember-me" class="checkbox-label" checked="True" /> Remember me
             </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-log-in"></span> Login</button>
     </form>
 
 </script>
@@ -142,11 +142,10 @@
     </header>
 
     <div ng-show="user">
-      <p>Hello, {{ user.password.email }}</p>
-      <button ng-click="auth.$unauth()">Logout</button>
-    </div>
-    <div ng-hide="user">
-        <p>Welcome, please <a href="#login">login</a></p>
+        <p>
+            {{ user.password.email }}
+            <a ng-click="logout()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+        </p>
     </div>
     
 </script>
@@ -172,9 +171,9 @@
         </div>
     </form>
     
-    <table class="table">
+    <table class="table table-striped">
         <thead>
-            <th class="name">Entry</th>
+            <th class="name">Video</th>
             <th>&nbsp;</th>
             <th>
                 <a href="#/new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
@@ -300,7 +299,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             if (save){
                 alert('saved succesfully');
             } else {
-                alert('saved succesfully');
+                alert('saved not succesfull');
             }
         }
         
@@ -320,32 +319,54 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $location.path('/main');
     }
 })
-.controller('Admin', ['$scope', 'Auth',
-    function($scope, Auth) {
-        $scope.greetings = "hola Admin!";
+.controller('Admin', ['$scope', 'Auth', '$location',
+    function($scope, Auth, $location) {
+    
         $scope.auth = Auth;
         $scope.user = $scope.auth.$getAuth();
-        console.log("Auth Status:", $scope.user );
+        if( ! $scope.user ) {
+            $location.path('/login');
+        }
+        
+        $scope.logout = function(){
+            $scope.auth.$unauth();
+            $location.path('/');
+        }
     }
 ])
-.controller('Login', ['$scope', '$firebase',
-    function($scope, $firebase) {
+.controller('Login', ['$scope', '$firebase', '$location',
+    function($scope, $firebase, $location) {
     
         $scope.submit = function () {
             var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
-
+            
+            ref.onAuth(function(authData) { 
+                $location.path('/admin');
+            });
+            
             ref.authWithPassword({
                 email    : $scope.email,
                 password : $scope.password
             }, function(error, authData) {
                 if (error) {
                     console.log("Login Failed!", error);
-                } else {
-                    console.log("Authenticated successfully with payload:", authData);
+                    switch (error.code) {
+                        case "INVALID_EMAIL":
+                            console.log("El email especificado es invalido.");
+                            break;
+                        case "INVALID_PASSWORD":
+                            console.log("La contraseña especificada es incorrecta.");
+                            break;
+                        case "INVALID_USER":
+                            console.log("El usuario no existe.");
+                            break;
+                        default:
+                            console.log("Error al loggear al usuario: ", error);
+                    }
                 }
             });
+
         };
-        
     }
 ])
 .controller('Acerca', ['$scope',
