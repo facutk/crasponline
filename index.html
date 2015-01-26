@@ -131,6 +131,8 @@
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-log-in"></span> Login</button>
     </form>
+    
+    <div class="alert alert-danger" role="alert" ng-show="err">{{ err }}</div>
 
 </script>
 
@@ -334,39 +336,19 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         }
     }
 ])
-.controller('Login', ['$scope', '$firebase', '$location',
-    function($scope, $firebase, $location) {
-    
+.controller('Login', ['$scope', 'Auth', '$location',
+    function($scope, Auth, $location) {
+        $scope.auth = Auth;
         $scope.submit = function () {
-            var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
-            
-            ref.onAuth(function(authData) { 
-                $location.path('/admin');
-            });
-            
-            ref.authWithPassword({
+            $scope.auth.$authWithPassword({
                 email    : $scope.email,
                 password : $scope.password
-            }, function(error, authData) {
-                if (error) {
-                    console.log("Login Failed!", error);
-                    switch (error.code) {
-                        case "INVALID_EMAIL":
-                            console.log("El email especificado es invalido.");
-                            break;
-                        case "INVALID_PASSWORD":
-                            console.log("La contraseña especificada es incorrecta.");
-                            break;
-                        case "INVALID_USER":
-                            console.log("El usuario no existe.");
-                            break;
-                        default:
-                            console.log("Error al loggear al usuario: ", error);
-                    }
-                }
+            }).then(function(authData) {
+                $location.path('/admin');
+            }).catch(function(error) {
+                $scope.err = error.message;
             });
-
-        };
+        }
     }
 ])
 .controller('Acerca', ['$scope',
