@@ -311,9 +311,10 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
     }
 ])
 .controller('Edit', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
+    console.log( $routeParams );
     var personURL = new Firebase(firebaseURL + $routeParams.id);
     $scope.person = $firebase(personURL).$asObject();
-
+    console.log( $scope.person );
     $scope.edit = function() {
         $scope.person.$save();
         $location.path('/main');
