@@ -561,6 +561,9 @@ footer a {
   padding-bottom: 4px;
 }
 
+th.name {
+  width: 95%;
+}
 
 /* Media Queries */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dppx) {
