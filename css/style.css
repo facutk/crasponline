@@ -462,10 +462,13 @@ aside {
   clear: both;
   margin: 80px 0 0;
   text-align: left;
+  font-size: 18px;
+  line-height: 26px;
 }
 
 aside h4 {
   font-weight: 900;
+  font-size:22px;
   text-transform: uppercase;
   position: relative;
   display: inline-block;

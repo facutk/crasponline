@@ -17,13 +17,16 @@
         <script src="js/imagesloaded.js"></script>
         <script src="js/plugins.min.js"></script>
         <script src='js/masonry.pkgd.min.js'></script>
-        
+        <script src="js/showdown.min.js"></script>
+
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-resource.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-route.min.js"></script>
         <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
         <script src="https://cdn.firebase.com/libs/angularfire/0.9.1/angularfire.min.js"></script>
+        <script src="js/angular-sanitize.min.js"></script>
+        <script src="js/markdown.js"></script>
         <script src='js/angular-masonry.js'></script>
         <script src="js/ngLoading.js"></script>
         
@@ -87,46 +90,52 @@
         <h1 class="title title-int"><span>Title</span><br><em>Epigram</em></h1>
     </header>
     
-        <!-- Conteúdo -->
-        <section>
-            <!-- Descrição -->
-<h2>description</h2>
+    <!-- Conteúdo -->
+    <section>
+        <!-- Descrição -->
+        <h2>Description</h2>
 
-<!-- Projetos -->
-    <div>
+        <!-- Vimeo -->
+        <div class="fotos">
+            <div class="fluid-width-video-wrapper">
+                <iframe src="http://player.vimeo.com/video/79866864?api=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            </div>
 
-    <!-- Fotos -->
-    <div class="fotos">
-                <div class="fluid-width-video-wrapper">
-                    <iframe src="http://player.vimeo.com/video/79866864?api=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-                </div>
-
-    <!-- Ficha Técnica -->
+        <!-- Ficha Técnica -->
         <aside>
-        <h4>Notes</h4>
-        <ul><div class="first column" style="width:50%; float: left;">
-                        <li><strong>Direção:</strong> Chágelado Estúdio</li>
-                        <li><strong>Produção Executiva:</strong> Mari Cezário</li>
-                        <li><strong>Assiste de Produção:</strong> Bruno Mourão</li>
-                        <li><strong>Styling:</strong> João Paulo Durão</li>
-                        </div><div class="last  column" style="width:50%; float: left;"><li class=""><strong class="">Beleza:</strong> Luiz Bicalho e Theodoro Remigia</li>
-                        <li><strong>Produção de Locação:</strong> Ana Paula Vilella</li>
-                    </div><br style="clear:both;"></ul>
-    </aside>
+            <h4>Notes</h4>
+            
+            <btf-markdown>
+**Direção:** Chágelado Estúdio
+
+**Produção Executiva:** Mari Cezário
+
+**Assiste de Produção:** Bruno Mourão
+
+**Styling:** João Paulo Durão
+
+**Beleza:** Luiz Bicalho e Theodoro Remigia
+
+**Produção de Locação:** Ana Paula Vilella
+
+            </btf-markdown>
+
+        </aside>
+        </div>
+    </section>
+
+    <!-- Nav -->
+    <div class="lowernav">
+        <nav class="nav-proj">
+            <ul>
+                <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
+                <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS LOS VIDEOS</a></li>
+                <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
+            </ul>
+        </nav>
     </div>
-        </section>
+    
 
-                    <!-- Navegação -->
-<div class="lowernav">
-            <nav class="nav-proj">
- <ul>
-    <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
-    <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS OS PROJETOS</a></li>
-    <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
- </ul>
-</nav>
-
-</div>
     {{id}}
     
 uri
@@ -320,7 +329,7 @@ notes
         </article>
 
 <script>
-myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'])
+myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading', 'btford.markdown'])
 .config(function(loadingProvider) {
 
 })
