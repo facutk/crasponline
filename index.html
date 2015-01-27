@@ -1,6 +1,9 @@
 <html ng-app="myApp">
     <head>
         <title>Crasponline Studio</title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
         <script src="js/jquery.js"></script>
         <script src="js/jquery.bridget.js"></script>
         <script src="js/get-style-property.js"></script>
@@ -75,26 +78,64 @@
         </div>
     </div>
     
-    <!-- CHAT MARKUP -->
-    <div class='example-chat l-demo-container'>
-        <header>Firebase Chat Demo</header>
+</script>
 
-        <div class='example-chat-toolbar'>
-            <label for='nameInput'>Username:</label>
-            <input ng-model='name' type='text' id='nameInput' placeholder='enter a username...'>
-        </div>
+<!-- CACHE FILE: video.html -->
+<script type="text/ng-template" id="video.html">
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Title</span><br><em>Epigram</em></h1>
+    </header>
+    
+        <!-- Conteúdo -->
+        <section>
+            <!-- Descrição -->
+<h2>description</h2>
 
-        <ul id='example-messages' class='example-chat-messages'>
-            <li ng-repeat='msg in messages'>
-            <strong class='example-chat-username'>{{msg.from}}</strong>
-                {{msg.body}}
-            </li>
-        </ul>
+<!-- Projetos -->
+    <div>
 
-        <footer>
-            <input ng-model='msg' ng-keydown="addMessage($event)" type='text' id='messageInput'  placeholder='Type a message...'>
-        </footer>
+    <!-- Fotos -->
+    <div class="fotos">
+                <div class="fluid-width-video-wrapper">
+                    <iframe src="http://player.vimeo.com/video/79866864?api=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                </div>
+
+    <!-- Ficha Técnica -->
+        <aside>
+        <h4>Notes</h4>
+        <ul><div class="first column" style="width:50%; float: left;">
+                        <li><strong>Direção:</strong> Chágelado Estúdio</li>
+                        <li><strong>Produção Executiva:</strong> Mari Cezário</li>
+                        <li><strong>Assiste de Produção:</strong> Bruno Mourão</li>
+                        <li><strong>Styling:</strong> João Paulo Durão</li>
+                        </div><div class="last  column" style="width:50%; float: left;"><li class=""><strong class="">Beleza:</strong> Luiz Bicalho e Theodoro Remigia</li>
+                        <li><strong>Produção de Locação:</strong> Ana Paula Vilella</li>
+                    </div><br style="clear:both;"></ul>
+    </aside>
     </div>
+        </section>
+
+                    <!-- Navegação -->
+<div class="lowernav">
+            <nav class="nav-proj">
+ <ul>
+    <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
+    <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS OS PROJETOS</a></li>
+    <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
+ </ul>
+</nav>
+
+</div>
+    {{id}}
+    
+uri
+title
+epigram
+description
+vimeo-id
+notes
+
 </script>
 
 <!-- CACHE FILE: acerca.html -->
@@ -231,7 +272,7 @@
 
     </head>
     
-    <body class="container">
+    <body class="int">
         
         <article class="margem">
         
@@ -414,7 +455,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             var id = ~~(Math.random() * 10000);
             return {
                     src: 'http://lorempixel.com/g/280/' + height + '/?' + id,
-                    link: '#link' + ~~(Math.random() * 100),
+                    link: '#/video/' + ~~(Math.random() * 100),
                     title: 'Title #' + ~~(Math.random() * 100),
                     summary: 'Summary #' + ~~(Math.random() * 100),
                     category: 'cat' + ~~(Math.random() * 3)
@@ -434,11 +475,18 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 
     }
 ])
+.controller('Video', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
+    $scope.id = $routeParams.id;
+})
 .config(function($routeProvider) {
     $routeProvider
         .when('/', {
             controller:'Videos',
             templateUrl:'videos.html'
+        })
+        .when('/video/:id', {
+            controller: 'Video',
+            templateUrl: 'video.html'
         })
         .when('/acerca', {
             controller:'Acerca',
