@@ -63,6 +63,10 @@ strong {
   font-weight: 800;
 }
 
+input:invalid {
+  background-color: #ffdddd;
+}
+  
 
 /* Margem */
 .margem {
@@ -284,8 +288,6 @@ h2.bar a {
   z-index: 1;
   transition: height 1.2s;
 }
-
-
 
 /* Items */
 .item a {

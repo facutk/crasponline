@@ -145,40 +145,17 @@
 
     <div ng-show="user">
         <p>
-            {{ user.password.email }}
+            <em>{{ user.password.email }}</em>
             <a ng-click="logout()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
         </p>
     </div>
-    
-</script>
-
-<!-- CACHE FILE: main.html -->
-<script type="text/ng-template" id="main.html">
-    <!-- Header -->
-    <header class="cabecalho">
-        <h1 class="title title-int"><span>Main</span><br><em>Area</em></h1>
-    </header>
-
-    <form ng-submit="add()">
-        <div class="form-group">
-            <label>First Name:</label>
-            <input type="text" ng-model="firstname" class="form-control">
-        </div>
-        <div class="form-group">
-            <label>Last Name:</label>
-            <input type="text" ng-model="lastname" class="form-control">
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary">
-        </div>
-    </form>
     
     <table class="table table-striped">
         <thead>
             <th class="name">Video</th>
             <th>&nbsp;</th>
             <th>
-                <a href="#/new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                <a href="#/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
             </th>
         </thead>
         <tbody>
@@ -193,26 +170,60 @@
             </tr>
         </tbody>
     </table>
+    
 </script>
 
 <!-- CACHE FILE: edit.html -->
 <script type="text/ng-template" id="edit.html">
     <!-- Header -->
     <header class="cabecalho">
-        <h1 class="title title-int"><span>Edit</span><br><em>post</em></h1>
+        <h1 class="title title-int"><span>Editar</span><br><em>video</em></h1>
     </header>
 
     <form ng-submit="edit()">
         <div class="form-group">
             <label>First Name:</label>
-            <input type="text" ng-model="person.firstname" class="form-control">
+            <input type="text" ng-model="person.firstname" class="form-control" ng-disabled="editing">
         </div>
         <div class="form-group">
             <label>Last Name:</label>
             <input type="text" ng-model="person.lastname" class="form-control">
         </div>
         <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary">
+            <a href="#/admin" class="btn btn-default" role="button">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar
+            </button>
+        </div>
+    </form>
+    
+</script>
+
+<!-- CACHE FILE: add.html -->
+<script type="text/ng-template" id="add.html">
+    <!-- Header -->
+    <header class="cabecalho">
+        <h1 class="title title-int"><span>Nuevo</span><br><em>video</em></h1>
+    </header>
+
+    <form ng-submit="add()">
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" required maxlength="32" pattern="[a-zA-Z0-9_-]+" ng-model="firstname" class="form-control" ng-disabled="editing">
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" ng-model="lastname" class="form-control">
+        </div>
+        <div class="form-group">
+            <a href="#/admin" class="btn btn-default" role="button">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar
+            </button>
         </div>
     </form>
     
@@ -229,7 +240,7 @@
             <header class="cabecalho">
 
                 <!-- Logo -->
-                <h1 class="logo"><a href="#login" title="Login">Crasponline Studio • Fotografia y Video</a></h1>
+                <h1 class="logo"><a href="#login" title="El Craspo">Crasponline Studio • Fotografia y Video</a></h1>
 
                 <!-- Menu -->
                 <ul class="menu bar">
@@ -283,9 +294,10 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .factory('Person', function(firebaseURL, $firebase){
     return $firebase(new Firebase(firebaseURL)).$asArray();
 })
-.controller('Main', ['$scope', 'Person',
+.controller('Add', ['$scope', 'Person',
     function($scope, Person) {
-    
+        
+        $scope.editing = false;
         $scope.person = Person;
         console.log( $scope.person );
         
@@ -304,14 +316,11 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
                 alert('saved not succesfull');
             }
         }
-        
-        $scope.remove = function (id) {
-            Person.$remove(id);
-        }
   
     }
 ])
 .controller('Edit', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
+    $scope.editing = true;
     console.log( $routeParams );
     var personURL = new Firebase(firebaseURL + $routeParams.id);
     $scope.person = $firebase(personURL).$asObject();
@@ -321,8 +330,8 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $location.path('/main');
     }
 })
-.controller('Admin', ['$scope', 'Auth', '$location',
-    function($scope, Auth, $location) {
+.controller('Admin', ['$scope', 'Auth', '$location', 'Person',
+    function($scope, Auth, $location, Person) {
     
         $scope.auth = Auth;
         $scope.user = $scope.auth.$getAuth();
@@ -334,6 +343,14 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             $scope.auth.$unauth();
             $location.path('/');
         }
+        
+        $scope.person = Person;
+        console.log( $scope.person );
+        
+        $scope.remove = function (id) {
+            Person.$remove(id);
+        }
+        
     }
 ])
 .controller('Login', ['$scope', 'Auth', '$location',
@@ -439,9 +456,9 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             controller:'Login',
             templateUrl:'login.html'
         })
-        .when('/main', {
-            controller:'Main',
-            templateUrl:'main.html'
+        .when('/add', {
+            controller: 'Add',
+            templateUrl: 'add.html'
         })
         .when('/edit/:id', {
             controller: 'Edit',
