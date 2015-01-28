@@ -402,10 +402,15 @@ h2.bar a {
   margin-top: 4px;
 }
 
+.table td {
+  font-size: 18px;
+}
+
 .table a ,
 .form-group a {
   opacity: 1;
 }
+
 
 /* Páginas internas */
 .int section h2 {margin-bottom:40px;}

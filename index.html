@@ -56,24 +56,23 @@
             </ul>
 
             <select>
-                <option value="#todos" data-filter="*">Todos</option>
-                <option value="#autoral" data-filter=".autoral">Autoral</option>
-                <option value="#moda" data-filter=".moda">Moda</option>
-                <option value="#publicidade" data-filter=".publicidade">Publicidade</option>
-                <option value="#registro" data-filter=".registro">Registro</option>
+                <option ng-click="filters.category = ''">TODOS</option>
+                <option ng-click="filters.category = 'cat0'">Musica</option>
+                <option ng-click="filters.category = 'cat1'">Cine</option>
+                <option ng-click="filters.category = 'cat2'">Publicidad</option>
             </select>
         </nav>
     </div>
-    
+        
     <div class="row projetos" masonry>
-        <div class="masonry-brick item p" ng-repeat="brick in bricks | filter:filters">
-            <a href="{{ brick.link }}" title>
-                <img ng-src="{{ brick.src }}" alt="A masonry brick">
+        <div class="masonry-brick item p" ng-repeat="video in videos | reverse | filter:filters">
+            <a href="#video/{{ video.uri }}" title>
+                <img ng-src="{{ video.thumbnail }}" alt="A masonry brick">
                 <div class="info">
                     <div class="t">
                         <div class="tc">
-                            <h3>{{ brick.title }}</h3>
-                            <p>{{ brick.summary }}</p>
+                            <h3>{{ video.title }}</h3>
+                            <p>{{ video.epigram }}</p>
                         </div>
                     </div>
                 </div>
@@ -85,66 +84,53 @@
 
 <!-- CACHE FILE: video.html -->
 <script type="text/ng-template" id="video.html">
-    <!-- Header -->
-    <header class="cabecalho">
-        <h1 class="title title-int"><span>Title</span><br><em>Epigram</em></h1>
-    </header>
-    
-    <!-- Conteúdo -->
-    <section>
-        <!-- Descrição -->
-        <h2>Description</h2>
 
-        <!-- Vimeo -->
-        <div class="fotos">
-            <div class="fluid-width-video-wrapper">
-                <iframe src="http://player.vimeo.com/video/79866864?api=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-            </div>
-
-        <!-- Ficha Técnica -->
-        <aside>
-            <h4>Notes</h4>
-            
-            <btf-markdown>
-**Direção:** Chágelado Estúdio
-
-**Produção Executiva:** Mari Cezário
-
-**Assiste de Produção:** Bruno Mourão
-
-**Styling:** João Paulo Durão
-
-**Beleza:** Luiz Bicalho e Theodoro Remigia
-
-**Produção de Locação:** Ana Paula Vilella
-
-            </btf-markdown>
-
-        </aside>
-        </div>
-    </section>
-
-    <!-- Nav -->
-    <div class="lowernav">
-        <nav class="nav-proj">
-            <ul>
-                <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
-                <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS LOS VIDEOS</a></li>
-                <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
-            </ul>
-        </nav>
+    <div ng-show="notfound">
+        <!-- Header -->
+        <header class="cabecalho">
+            <h1 class="title title-int"><span>404</span><br><em>not found</em></h1>
+        </header>
     </div>
     
+    <div ng-show="video">
+        <!-- Header -->
+        <header class="cabecalho">
+            <h1 class="title title-int"><span>{{video.title}}</span><br><em>{{video.epigram}}</em></h1>
+        </header>
+        
+        <!-- Conteúdo -->
+        <section>
+            <!-- Descrição -->
+            <h2>{{video.description}}</h2>
 
-    {{id}}
-    
-uri
-title
-epigram
-thumbnail
-description
-vimeo-id
-notes
+            <!-- Vimeo -->
+            <div class="fotos">
+                <div class="fluid-width-video-wrapper">
+                    <iframe ng-src="{{video.vimeoid}}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                </div>
+
+
+
+            <!-- Ficha Técnica -->
+            <aside>
+                <h4>Notes</h4>
+                <div btf-markdown="video.notes"></div>
+            </aside>
+            </div>
+        </section>
+
+        <!-- Nav -->
+        <div class="lowernav">
+            <nav class="nav-proj">
+                <ul>
+                    <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
+                    <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS LOS VIDEOS</a></li>
+                    <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
+                </ul>
+            </nav>
+        </div>
+        
+    </div>
 
 </script>
 
@@ -212,10 +198,16 @@ notes
             </th>
         </thead>
         <tbody>
-            <tr ng-repeat="(id, vid) in video">
-                <td>{{ vid.uri }}</td>
+            <tr ng-repeat="(id, vid) in video | reverse">
                 <td>
-                    <a href="#/edit/{{ vid.$id }}" class="btn btn-default btn-link"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                    <a href="#/video/{{ vid.uri }}">
+                        {{ vid.uri }}
+                    </a>
+                </td>
+                <td>
+                    <a href="#/edit/{{ vid.$id }}" class="btn btn-default btn-link">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </a>
                 </t>
                 <td>
                     <button class="btn btn-default btn-link" type="button" ng-click="remove(id)">
@@ -225,7 +217,7 @@ notes
             </tr>
         </tbody>
     </table>
-    
+
 </script>
 
 <!-- CACHE FILE: detail.html -->
@@ -312,6 +304,8 @@ notes
         </div>
         
     </form>
+    
+    <div class="alert alert-danger" role="alert" ng-show="err">{{ err }}</div>
 
 </script>
 
@@ -365,8 +359,10 @@ notes
 
 <script>
 myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading', 'btford.markdown'])
+.config(function($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([ 'self', '**' ]);
+})
 .config(function(loadingProvider) {
-
 })
 .value('firebaseURL', 'https://incandescent-torch-8162.firebaseio.com/')
 .service('fbRef', function(firebaseURL) {
@@ -387,6 +383,25 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .factory('Person', function(firebaseURL, $firebase){
     return $firebase(new Firebase(firebaseURL)).$asArray();
 })
+.filter('reverse', function() {
+    function toArray(list) {
+        var k, out = [];
+        if( list ) {
+            if( angular.isArray(list) ) {
+                out = list;
+            }
+            else if( typeof(list) === 'object' ) {
+                for (k in list) {
+                    if (list.hasOwnProperty(k)) { out.push(list[k]); }
+                }
+            }
+        }
+        return out;
+    }
+    return function(items) {
+        return toArray(items).slice().reverse();
+    };
+})
 .controller('Add', ['$scope', 'Person', '$location', 'Categories',
     function($scope, Person, $location, Categories) {
     
@@ -402,7 +417,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 
             if (save){
                 $location.path('/admin');
-            }
+            } 
         }
   
     }
@@ -442,7 +457,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $scope.remove = function (id) {
             Person.$remove(id);
         }
-        
+
     }
 ])
 .controller('Login', ['$scope', 'Auth', '$location',
@@ -470,8 +485,8 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $scope.greetings = "hola donde!";
     }
 ])
-.controller('Videos', ['$scope', '$firebase',
-    function($scope, $firebase) {
+.controller('Videos', ['$scope', '$firebase', 'Person',
+    function($scope, $firebase, Person) {
         var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
 
         $scope.load = function() {
@@ -509,11 +524,17 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             genBrick(),
             genBrick()
         ];
-
+        $scope.videos = Person;
     }
 ])
 .controller('Video', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
-    $scope.id = $routeParams.id;
+    var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
+    ref.orderByChild("uri").equalTo($routeParams.uri).once("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            $scope.video = childSnapshot.val();
+        });
+        $scope.notfound = ( $scope.video == null );
+    });
 })
 .config(function($routeProvider) {
     $routeProvider
@@ -521,7 +542,7 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
             controller:'Videos',
             templateUrl:'videos.html'
         })
-        .when('/video/:id', {
+        .when('/video/:uri', {
             controller: 'Video',
             templateUrl: 'video.html'
         })
@@ -556,6 +577,5 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 ;
 </script>
 </body>
-
 
 </html>
