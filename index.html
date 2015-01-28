@@ -106,10 +106,8 @@
             <!-- Vimeo -->
             <div class="fotos">
                 <div class="fluid-width-video-wrapper">
-                    <iframe ng-src="{{video.vimeoid}}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                    <iframe ng-src="{{vimeo_url}}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
                 </div>
-
-
 
             <!-- Ficha Técnica -->
             <aside>
@@ -252,6 +250,14 @@
                 <input type="text" class="form-control" id="epigram" placeholder="Epigram" required maxlength="24" ng-model="video.epigram">
             </div>
         </div>
+                
+        <!-- Vimeo ID -->
+        <div class="form-group">
+            <label for="vimeoid" class="col-sm-2 control-label">Vimeo ID</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="vimeoid" placeholder="Vimeo Numeric ID" required ng-model="video.vimeoid" ng-keyup="fetchData()">
+            </div>
+        </div>
         
         <!-- Thumbnail -->
         <div class="form-group">
@@ -261,14 +267,6 @@
             </div>
         </div>
         
-        <!-- Vimeo ID -->
-        <div class="form-group">
-            <label for="vimeoid" class="col-sm-2 control-label">Vimeo ID</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="vimeoid" placeholder="Vimeo ID" required ng-model="video.vimeoid">
-            </div>
-        </div>
-
         <!-- Description -->
         <div class="form-group">
             <label for="description" class="col-sm-2 control-label">Description</label>
@@ -380,6 +378,13 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
     var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
     return $firebaseAuth(ref);
 }])
+.factory('vimeoInfo', function($http){
+    return {
+        get: function( vimeoId ) {
+            return $http.jsonp( 'http://vimeo.com/api/v2/video/' + vimeoId + '.json?callback=JSON_CALLBACK&_=' + (new Date().getTime()) );
+        }
+    };
+})
 .factory('Person', function(firebaseURL, $firebase){
     return $firebase(new Firebase(firebaseURL)).$asArray();
 })
@@ -402,8 +407,8 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         return toArray(items).slice().reverse();
     };
 })
-.controller('Add', ['$scope', 'Person', '$location', 'Categories',
-    function($scope, Person, $location, Categories) {
+.controller('Add', ['$scope', 'Person', '$location', 'Categories', 'vimeoInfo',
+    function($scope, Person, $location, Categories, vimeoInfo) {
     
         $scope.categories = Categories;
         
@@ -419,11 +424,20 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
                 $location.path('/admin');
             } 
         }
+        
+        $scope.fetchData = function() {
+            vimeoInfo.get( $scope.video.vimeoid ).success( function(response){
+                response.forEach(function(res){
+                    $scope.video.thumbnail = res.thumbnail_large;
+                    $scope.video.description = res.description;
+                });
+            });
+        }
   
     }
 ])
-.controller('Edit', [ '$scope', '$location', '$routeParams', '$firebase', 'firebaseURL', 'Categories',
-    function ($scope, $location, $routeParams, $firebase, firebaseURL, Categories) {
+.controller('Edit', [ '$scope', '$location', '$routeParams', '$firebase', 'firebaseURL', 'Categories', 'vimeoInfo',
+    function ($scope, $location, $routeParams, $firebase, firebaseURL, Categories, vimeoInfo) {
         $scope.editing = true;
         $scope.categories = Categories;
         console.log( $routeParams );
@@ -434,6 +448,16 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $scope.save = function() {
             $scope.video.$save();
             $location.path('/admin');
+        }
+        
+        $scope.fetchData = function() {
+            vimeoInfo.get( $scope.video.vimeoid ).success( function(response){
+                console.log( response );
+                response.forEach(function(res){
+                    $scope.video.thumbnail = res.thumbnail_large;
+                    $scope.video.description = res.description;
+                });
+            });
         }
     }
 ])
@@ -490,13 +514,13 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $scope.videos = Person;
     }
 ])
-.controller('Video', function ($scope, Person, $routeParams) {
+.controller('Video', function ($scope, Person, $routeParams ) {
     var videos = Person;
-    $scope.video == null
     videos.$loaded().then( function(videos) {
         videos.forEach( function( video ) {
             if ( video.uri == $routeParams.uri ) {
                 $scope.video = video;
+                $scope.vimeo_url = 'http://player.vimeo.com/video/' + $scope.video.vimeoid + '?api=1';
             }
         });
         if ( $scope.video ) {
