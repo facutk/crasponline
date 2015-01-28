@@ -50,23 +50,23 @@
         <nav>
             <ul class="cat bar">
                 <li><a ng-click="filters.category = ''">TODOS</a></li>
-                <li><a ng-click="filters.category = 'cat0'">Musica</a></li>
-                <li><a ng-click="filters.category = 'cat1'">Cine</a></li>
-                <li><a ng-click="filters.category = 'cat2'">Publicidad</a></li>
+                <li><a ng-click="filters.category = '1'">Musica</a></li>
+                <li><a ng-click="filters.category = '2'">Cine</a></li>
+                <li><a ng-click="filters.category = '3'">Publicidad</a></li>
             </ul>
 
             <select>
                 <option ng-click="filters.category = ''">TODOS</option>
-                <option ng-click="filters.category = 'cat0'">Musica</option>
-                <option ng-click="filters.category = 'cat1'">Cine</option>
-                <option ng-click="filters.category = 'cat2'">Publicidad</option>
+                <option ng-click="filters.category = '1'">Musica</option>
+                <option ng-click="filters.category = '2'">Cine</option>
+                <option ng-click="filters.category = '3'">Publicidad</option>
             </select>
         </nav>
     </div>
         
     <div class="row projetos" masonry>
         <div class="masonry-brick item p" ng-repeat="video in videos | reverse | filter:filters">
-            <a href="#video/{{ video.uri }}" title>
+            <a href="#/video/{{ video.uri }}" title>
                 <img ng-src="{{ video.thumbnail }}" alt="A masonry brick">
                 <div class="info">
                     <div class="t">
@@ -123,9 +123,9 @@
         <div class="lowernav">
             <nav class="nav-proj">
                 <ul>
-                    <li><a href="http://www.chagelado.com.br/projeto/cajo-inverno-2015/" title="Cajo / Inverno 2015"><span>Cajo</span><br><em>Inverno 2015</em></a></li>
-                    <li class="bar"><a href="http://www.chagelado.com.br/" title="Ver todos os projetos">TODOS LOS VIDEOS</a></li>
-                    <li><a href="http://www.chagelado.com.br/projeto/civil-jeans-inverno-2015/" title="Civil Jeans / Inverno 2015"><span>Civil Jeans</span><br><em>Inverno 2015</em></a></li>
+                    <li><a href="#/video/{{next_video.uri}}"><span>{{next_video.title}}</span><br><em>{{next_video.epigram}}</em></a></li>
+                    <li class="bar"><a href="#">TODOS</a></li>
+                    <li><a href="#/video/{{prev_video.uri}}"><span>{{prev_video.title}}</span><br><em>{{prev_video.epigram}}</em></a></li>
                 </ul>
             </nav>
         </div>
@@ -485,55 +485,27 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         $scope.greetings = "hola donde!";
     }
 ])
-.controller('Videos', ['$scope', '$firebase', 'Person',
-    function($scope, $firebase, Person) {
-        var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
-
-        $scope.load = function() {
-            // do your $() stuff here
-            var b = $(".cat"),
-                c = b.find("a");
-            c.click(function() {
-                var a = $(this);
-                if (a.hasClass("on")) return !1;
-                var b = a.parents(".cat");
-                b.find(".on").removeClass("on"), a.addClass("on")
-            });
-        };
-        $scope.load();
-
-        function genBrick() {
-            var height = ~~(Math.random() * 500) + 100;
-            var id = ~~(Math.random() * 10000);
-            return {
-                    src: 'http://lorempixel.com/g/280/' + height + '/?' + id,
-                    link: '#/video/' + ~~(Math.random() * 100),
-                    title: 'Title #' + ~~(Math.random() * 100),
-                    summary: 'Summary #' + ~~(Math.random() * 100),
-                    category: 'cat' + ~~(Math.random() * 3)
-                };
-        };
-
-        $scope.bricks = [
-            genBrick(),
-            genBrick(),
-            genBrick(),
-            genBrick(),
-            genBrick(),
-            genBrick(),
-            genBrick(),
-            genBrick()
-        ];
+.controller('Videos', ['$scope', 'Person',
+    function($scope, Person) {
         $scope.videos = Person;
     }
 ])
-.controller('Video', function ($scope, $location, $routeParams, $firebase, firebaseURL) {
-    var ref = new Firebase("https://incandescent-torch-8162.firebaseio.com/");
-    ref.orderByChild("uri").equalTo($routeParams.uri).once("value", function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            $scope.video = childSnapshot.val();
+.controller('Video', function ($scope, Person, $routeParams) {
+    var videos = Person;
+    $scope.video == null
+    videos.$loaded().then( function(videos) {
+        videos.forEach( function( video ) {
+            if ( video.uri == $routeParams.uri ) {
+                $scope.video = video;
+            }
         });
-        $scope.notfound = ( $scope.video == null );
+        if ( $scope.video ) {
+            var index = videos.indexOf( $scope.video );
+            $scope.prev_video = videos[ videos.indexOf( $scope.video ) - 1 ];
+            $scope.next_video = videos[ videos.indexOf( $scope.video ) + 1 ];
+        } else {
+            $scope.notfound = ( $scope.video == null );
+        }       
     });
 })
 .config(function($routeProvider) {
