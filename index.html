@@ -19,6 +19,7 @@
         <script src='js/masonry.pkgd.min.js'></script>
         <script src="js/showdown.min.js"></script>
 
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=weather,visualization,panoramio"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-resource.min.js"></script>
@@ -29,14 +30,14 @@
         <script src="js/markdown.js"></script>
         <script src='js/angular-masonry.js'></script>
         <script src="js/ngLoading.js"></script>
-        
+        <script src="js/ng-map.js"></script>
+
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="css/masonry.css">
         <link rel="stylesheet" href="css/ngLoading.css">
         <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" type="text/css" href="https://www.firebase.com/resources/tutorial/css/example.css">
 
 <!-- CACHE FILE: videos.html -->
 <script type="text/ng-template" id="videos.html">
@@ -107,7 +108,7 @@
 
             <!-- Ficha Técnica -->
             <aside>
-                <h4>Notes</h4>
+                <h4>Notas</h4>
                 <div btf-markdown="video.notes"></div>
             </aside>
             </div>
@@ -118,7 +119,7 @@
             <nav class="nav-proj">
                 <ul>
                     <li><a href="#/video/{{next_video.uri}}"><span>{{next_video.title}}</span><br><em>{{next_video.epigram}}</em></a></li>
-                    <li class="bar"><a href="#">TODOS</a></li>
+                    <li class="bar"><a href="#/">TODOS</a></li>
                     <li><a href="#/video/{{prev_video.uri}}"><span>{{prev_video.title}}</span><br><em>{{prev_video.epigram}}</em></a></li>
                 </ul>
             </nav>
@@ -134,6 +135,23 @@
     <header class="cabecalho">
         <h1 class="title title-int"><span>Acerca</span><br><em>del Craspo</em></h1>
     </header>
+    
+    <!-- Contenido Acerca -->
+    <div class="content-section-a">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive img-rounded" src="http://www.timothybyford.com/slika_4483_NENlaQNLgbIeRN_1_1.jpg" alt="">
+                </div>
+                <div class="col-lg-5 col-sm-6">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">El Craspo viene<br>El Craspo se va</h2>
+                    <p class="lead">Pero mantiene todos sus videos en un mismo lugar.<br/>Tu Lugar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </script>
 
 <!-- CACHE FILE: donde.html -->
@@ -142,6 +160,13 @@
     <header class="cabecalho">
         <h1 class="title title-int"><span>Donde</span><br><em>lo encontramos</em></h1>
     </header>
+    <map class="mapa_donde" center="-34.5131834,-58.4982475" zoom="13">
+        <info-window position="-34.5131834,-58.4982475" visible="true">
+          <div ng-non-bindable="">
+            Olnos, Buenos Aires, Argentina
+          </div>
+        </info-window>
+    </map>
 </script>
 
 <!-- CACHE FILE: login.html -->
@@ -192,7 +217,7 @@
             </th>
         </thead>
         <tbody>
-            <tr ng-repeat="(id, video) in videos | reverse">
+            <tr ng-repeat="video in videos | reverse">
                 <td>
                     <a href="#/video/{{ video.uri }}">
                         {{ video.uri }}
@@ -204,7 +229,7 @@
                     </a>
                 </t>
                 <td>
-                    <button class="btn btn-default btn-link" type="button" ng-click="remove(id)">
+                    <button class="btn btn-default btn-link" type="button" ng-click="remove(video)">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </button>
                 </td>
@@ -344,7 +369,7 @@
             
             <!-- Footer -->
             <footer class="bar">
-                12 3456 7890&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
+                01 2345 6789&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
                 <a href="#">baws@crasponline.com.ar</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
                 <a href="#admin">admin</a>
             </footer>
@@ -352,7 +377,7 @@
         </article>
 
 <script>
-myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading', 'btford.markdown'])
+myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading', 'btford.markdown', 'ngMap'])
 .config(function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([ 'self', '**' ]);
 })
@@ -405,16 +430,11 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 })
 .controller('Add', ['$scope', 'VideosFactory', '$location', 'Categories', 'vimeoInfo',
     function($scope, VideosFactory, $location, Categories, vimeoInfo) {
-    
         $scope.categories = Categories;
         $scope.editing = false;
 
         $scope.save = function() {
-            var save = VideosFactory.$add( $scope.video );
-
-            if (save){
-                $location.path('/admin');
-            } 
+            var save = VideosFactory.$add( $scope.video ).then(function( result ){ $location.path('/admin'); });
         }
         
         $scope.fetchData = function() {
@@ -432,14 +452,12 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
     function ($scope, $location, $routeParams, $firebase, firebaseURL, Categories, vimeoInfo) {
         $scope.editing = true;
         $scope.categories = Categories;
-        console.log( $routeParams );
-        var personURL = new Firebase(firebaseURL + $routeParams.id);
-        $scope.video = $firebase(personURL).$asObject();
 
-        console.log( $scope.video );
+        var videoURL = new Firebase(firebaseURL + $routeParams.id);
+        $scope.video = $firebase(videoURL).$asObject();
+
         $scope.save = function() {
-            $scope.video.$save();
-            $location.path('/admin');
+            $scope.video.$save().then(function( result ){ $location.path('/admin'); });
         }
         
         $scope.fetchData = function() {
@@ -468,16 +486,16 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
         }
         
         $scope.videos = VideosFactory;
-        console.log( $scope.video );
         
-        $scope.remove = function (id) {
-            VideosFactory.$remove(id);
+        $scope.remove = function ( video ) {
+            VideosFactory.$remove( $scope.videos.indexOf( video ) );
         }
 
     }
 ])
 .controller('Login', ['$scope', 'Auth', '$location',
     function($scope, Auth, $location) {
+    
         $scope.auth = Auth;
         $scope.submit = function () {
             $scope.auth.$authWithPassword({
@@ -493,12 +511,12 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 ])
 .controller('Acerca', ['$scope',
     function($scope) {
-        $scope.greetings = "hola acerca!";
+        
     }
 ])
 .controller('Donde', ['$scope',
     function($scope) {
-        $scope.greetings = "hola donde!";
+        
     }
 ])
 .controller('Videos', ['$scope', 'VideosFactory', 'Categories',

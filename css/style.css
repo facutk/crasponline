@@ -541,6 +541,9 @@ aside .last {
   display: none;
 }
 
+.mapa_donde {
+  height: 56.25%; /* 16:9 */
+}
 
 /* Contato */
 .contato li {
