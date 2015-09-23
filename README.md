@@ -10,12 +10,12 @@ Pagina para Craspo
 * Revisar categorias (eliminar publicidad)
 * Cambiar videos a "home"
 * Subir la pag a /dev
+* Cambiar el titulo
 
 ## Must
 * Aplicar logo posta en pagina principal
 * Logo aparicion borrar u modificar
 * Revisar logos en mobile
-* Cambiar el titulo
 
 ## Could
 * Agregar tags meta
