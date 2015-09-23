@@ -53,7 +53,6 @@
                 <li><a ng-click="filters.category = ''">TODOS</a></li>
                 <li><a ng-click="filters.category = '1'">Videos</a></li>
                 <li><a ng-click="filters.category = '2'">Grafica</a></li>
-                <li><a ng-click="filters.category = '3'">Publicidad</a></li>
             </ul>
 
             <select class="form-control" ng-model="filters.category" ng-options="cat.id as cat.name for cat in categories"></select>
@@ -342,7 +341,7 @@
 
                 <!-- Menu -->
                 <ul class="menu bar">
-                    <li><a href="#videos" title="Videos">Videos</a></li>
+                    <li><a href="#videos" title="Videos">Home</a></li>
                     <li><a href="#acerca" title="Acerca">Acerca</a></li>
                     <li><a href="#donde" title="Donde">Donde</a></li>
                 </ul>
@@ -390,9 +389,8 @@ myApp = angular.module('myApp', ['ngRoute','firebase', 'wu.masonry', 'ngLoading'
 .service('Categories', function() {
   return [
             { id: 0, name: '' },
-            { id: 1, name: 'Musica' },
-            { id: 2, name: 'Cine' },
-            { id: 3, name: 'Publicidad' }
+            { id: 1, name: 'Videos' },
+            { id: 2, name: 'Grafica' }
         ];
 })
 .factory('Auth', ['$firebaseAuth', function($firebaseAuth) {

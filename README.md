@@ -7,16 +7,18 @@ Pagina para Craspo
 
 ## DONE
 * Pasarle a Facu acceso a Byethost
-
-## Must
 * Revisar categorias (eliminar publicidad)
-* Aplicar logo posta en pagina principal
-* Logo aparicion borrar u modificar
-* Revisar logos en mobile
 * Cambiar videos a "home"
 * Subir la pag a /dev
 
+## Must
+* Aplicar logo posta en pagina principal
+* Logo aparicion borrar u modificar
+* Revisar logos en mobile
+* Cambiar el titulo
+
 ## Could
+* Agregar tags meta
 * Agregar contenido "Acerca" (Quienes somos?)
 * Cuando esta mobile cambiar droplist por puntitos
 * Admin?
